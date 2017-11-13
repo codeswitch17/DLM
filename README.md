@@ -1,16 +1,24 @@
 # DLM
 Dual-Monolingual Language Model
 
-Run the calc_ppl.sh script with the following arguments:
+Requirements:
 
-Arg1 -> Destination directory (Where the new files will be saved)
+1. Train, Dev and Test files with 1 utterance per line
 
-Arg2 -> Root directory of srilm (If included in PATH variables, pass ".")
+2. SRILM directory
 
-Arg3 -> Training data combined txt
+How to run:
 
-Arg4 -> Dev data combined txt
+1. Change the SRILM_ROOT variable in path.sh with your srilm directory
 
-Arg5 -> Test data combined txt
+2. Run the calc_ppl.sh script with the following arguments:
 
-The results will be printed on the console
+Arg1 -> Training data combined txt
+
+Arg2 -> Dev data combined txt
+
+Arg3 -> Test data combined txt
+
+The perplexity results will be printed on the console
+
+(NOTE - Default settings run for ENG-MAN code-switched text. For running other settings, you may have to manually change specific language identification code (they have been commented with "NOTE") in clean_for_lm.py and get_SystemB_ppl.py)
