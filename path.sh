@@ -1,0 +1,1 @@
+SRILM_ROOT="../../srilm-1.7.2/bin/i686-m64/"

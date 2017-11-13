@@ -1,59 +1,62 @@
-file3=$1	# Destination Directory
-file4=$2	# Root directory of srilm
-train_file=$3	# Train File
-dev_file=$4	# Dev File
-test_file=$5	# Test File
+train_file=$1	# Train File
+dev_file=$2		# Dev File
+test_file=$3	# Test File
 
-rm -rf $file3
+. ./path.sh
+
+tmpdest="/tmp/testing"	# Temporary Destination Directory
+rm -rf $tmpdest
 
 # Train
-mkdir -p $file3"/Train_Data/System_A"
-cp $train_file $file3"/Train_Data/System_A/combined.txt"
+mkdir -p $tmpdest"/Train_Data/System_A"
+cp $train_file $tmpdest"/Train_Data/System_A/combined.txt"
 
 # Dev
-mkdir -p $file3"/Dev_Data/System_A"
-cp $dev_file $file3"/Dev_Data/System_A/combined.txt"
+mkdir -p $tmpdest"/Dev_Data/System_A"
+cp $dev_file $tmpdest"/Dev_Data/System_A/combined.txt"
 
 # Test
-mkdir -p $file3"/Test_Data/System_A"
-cp $test_file $file3"/Test_Data/System_A/combined.txt"
+mkdir -p $tmpdest"/Test_Data/System_A"
+cp $test_file $tmpdest"/Test_Data/System_A/combined.txt"
 
-for dir in $(ls $file3)
+for dir in $(ls $tmpdest)
 do
-    mkdir -p $file3"/"$dir"/System_B_man"
-    mkdir -p $file3"/"$dir"/System_B_eng"
-    python clean_for_lm.py $file3"/"$dir"/System_A/combined.txt" $file3"/"$dir"/System_B_eng/combined.txt" $file3"/"$dir"/System_B_man/combined.txt" "<ENG>" "<MAN>"
+    mkdir -p $tmpdest"/"$dir"/System_B_lang2"
+    mkdir -p $tmpdest"/"$dir"/System_B_lang1"
+    python clean_for_lm.py $tmpdest"/"$dir"/System_A/combined.txt" $tmpdest"/"$dir"/System_B_lang1/combined.txt" $tmpdest"/"$dir"/System_B_lang2/combined.txt" "<LANG1>" "<LANG2>"
 done
 
-for dir in $(ls $file3/Train_Data)
+for dir in $(ls $tmpdest/Train_Data)
 do
-	./$file4/ngram-count -lm $file3/Train_Data/$dir/train.lm -text $file3/Train_Data/$dir/combined.txt -kndiscount -unk -interpolate -order 2    
+	./$SRILM_ROOT/ngram-count -lm $tmpdest/Train_Data/$dir/train.lm -text $tmpdest/Train_Data/$dir/combined.txt -kndiscount -unk -interpolate -order 2    
 done
 
 echo "Training Perplexities:"
-for dir in $(ls $file3/Train_Data)
+for dir in $(ls $tmpdest/Train_Data)
 do
 	echo $dir
-	./$file4/ngram -lm $file3/Train_Data/$dir/train.lm -ppl $file3/Train_Data/$dir/combined.txt -unk -order 2
+	./$SRILM_ROOT/ngram -lm $tmpdest/Train_Data/$dir/train.lm -ppl $tmpdest/Train_Data/$dir/combined.txt -unk -order 2
 done
 
 echo "Dev Perplexities:"
-for dir in $(ls $file3/Dev_Data)
+for dir in $(ls $tmpdest/Dev_Data)
 do
 	echo $dir
-	./$file4/ngram -lm $file3/Train_Data/$dir/train.lm -ppl $file3/Dev_Data/$dir/combined.txt -unk -order 2
+	./$SRILM_ROOT/ngram -lm $tmpdest/Train_Data/$dir/train.lm -ppl $tmpdest/Dev_Data/$dir/combined.txt -unk -order 2
 done
 
 echo "Test Perplexities:"
-for dir in $(ls $file3/Test_Data)
+for dir in $(ls $tmpdest/Test_Data)
 do
 	echo $dir
-	./$file4/ngram -lm $file3/Train_Data/$dir/train.lm -ppl $file3/Test_Data/$dir/combined.txt -unk -order 2
+	./$SRILM_ROOT/ngram -lm $tmpdest/Train_Data/$dir/train.lm -ppl $tmpdest/Test_Data/$dir/combined.txt -unk -order 2
 done
 
 echo "Combined Perplexities:"
-for dir in $(ls $file3)
+for dir in $(ls $tmpdest)
 do
 	echo $dir
-	python ../code/getPerplexity_combined.py $file3/Train_Data/System_B_man/train.lm $file3/Train_Data/System_B_eng/train.lm $file3/$dir/System_A/combined.txt 0
+	python get_SystemB_ppl.py $tmpdest/Train_Data/System_B_lang2/train.lm $tmpdest/Train_Data/System_B_lang1/train.lm $tmpdest/$dir/System_A/combined.txt 0
 done
+
+rm -rf $tmpdest
