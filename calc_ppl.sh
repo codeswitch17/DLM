@@ -56,7 +56,7 @@ echo "Combined Perplexities:"
 for dir in $(ls $tmpdest)
 do
 	echo $dir
-	python get_SystemB_ppl.py $tmpdest/Train_Data/System_B_lang2/train.lm $tmpdest/Train_Data/System_B_lang1/train.lm $tmpdest/$dir/System_A/combined.txt 0
+	python compute_DLM_ppl.py $tmpdest/Train_Data/System_B_lang2/train.lm $tmpdest/Train_Data/System_B_lang1/train.lm $tmpdest/$dir/System_A/combined.txt 0
 done
 
 rm -rf $tmpdest
