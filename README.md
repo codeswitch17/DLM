@@ -13,12 +13,12 @@ How to run:
 
 2. Run the calc_ppl.sh script with the following arguments:
 
-Arg1 -> Training data combined txt
+arg1: train file
 
-Arg2 -> Dev data combined txt
+arg2: dev file
 
-Arg3 -> Test data combined txt
+arg3: test file
 
 The perplexity results will be printed on the console
 
-(NOTE - Default settings run for ENG-MAN code-switched text. For running other settings, you may have to manually change specific language identification code (they have been commented with "NOTE") in clean_for_lm.py and get_SystemB_ppl.py)
+(NOTE - Default settings run for ENG-MAN code-switched text. For running other settings, you may have to manually change specific language identification code (they have been commented with "NOTE") in clean_for_lm.py and compute_DLM_ppl.py)
